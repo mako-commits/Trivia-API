@@ -22,7 +22,7 @@ class QuestionView extends Component {
 
   getQuestions = () => {
     $.ajax({
-      url: `http://127.0.0.1:5000/questions?page=${this.state.page}`, //TODO: update request URL
+      url: `/questions?page=${this.state.page}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({
@@ -94,6 +94,7 @@ class QuestionView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        console.log(result);
         this.setState({
           questions: result.questions,
           totalQuestions: result.total_questions,
@@ -140,6 +141,7 @@ class QuestionView extends Component {
           <ul>
             {Object.keys(this.state.categories).map((id) => (
               <li
+                className="category-item"
                 key={id}
                 onClick={() => {
                   this.getByCategory(id);

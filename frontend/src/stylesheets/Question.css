@@ -11,6 +11,22 @@
 .categories-list > form {
   width: 60%;
 }
+.category {
+  padding-left: 15px;
+}
+.category-item {
+  border: 1px solid #000;
+  background: dodgerblue;
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-box {
+  padding: 10px;
+}
 
 .questions-list {
   flex-basis: 75%;
@@ -18,13 +34,18 @@
 }
 
 .Question-holder {
-  padding: 10px 20px;
+  padding: 20px 20px;
   border: 2px black solid;
-  text-align: left;
+  /* #text-align: center; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   margin: 7px;
 }
 
 .Question-status {
+  margin-top: 20px;
   display: flex;
   flex-direction: row;
   height: 30px;
