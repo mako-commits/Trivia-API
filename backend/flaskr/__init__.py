@@ -73,12 +73,12 @@ def create_app(test_config=None):
 
         return current_questions
 
-    @app.route('/questions')
+    @app.route('/questions', methods=['GET'])
     def get_questions():
         questions = Question.query.all()
         categories = Category.query.all()
         current_questions = paginate_questions(request, questions)
-
+        
         if len(current_questions) == 0:
             abort(404)
 
@@ -180,7 +180,7 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
-
+    
     """
     @TODO:
     Create a GET endpoint to get questions based on category.
@@ -225,18 +225,18 @@ def create_app(test_config=None):
             questions = Question.query.filter(
                 Question.category == quiz_category['id']).all()
 
-        formated_questions = [question.format() for question in questions]
+        formatted_questions = [question.format() for question in questions]
 
-        question = random.choice(formated_questions)
+        question = random.choice(formatted_questions)
 
-        while len(previous_questions) < len(formated_questions):
+        while len(previous_questions) < len(formatted_questions):
             if question['id'] not in previous_questions:
                 return jsonify({
                     'success': True,
                     'question': question
                 })
             else:
-                question = random.choice(formated_questions)
+                question = random.choice(formatted_questions)
 
         else:
             return jsonify({
@@ -249,23 +249,31 @@ def create_app(test_config=None):
     """
     @app.errorhandler(404)
     def not_found(error):
-        return (jsonify({"success": False, "error": 404,
-                         "message": "resource not found"}), 404, )
+        return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "resource not found"}),
+        404, 
 
     @app.errorhandler(422)
     def unprocessable(error):
-        return (
-            jsonify({"success": False, "error": 422, "message": "unprocessable"}),
-            422,
-        )
+        return jsonify({
+        "success": False, 
+        "error": 422, 
+        "message": "unprocessable"}),
+        422,
+        
 
     @app.errorhandler(400)
     def bad_request(error):
-        return jsonify({"success": False, "error": 400,
-                       "message": "bad request"}), 400
+        return jsonify({
+        "success": False,
+        "error": 400,
+        "message": "bad request"}),
+        400
 
     @app.errorhandler(405)
-    def not_allowed(error):
+    def method_not_allowed(error):
         return jsonify({
             'success': False,
             'error': 405,
@@ -273,7 +281,7 @@ def create_app(test_config=None):
         }), 405
 
     @app.errorhandler(500)
-    def not_allowed(error):
+    def internal_server_error(error):
         return jsonify({
             'success': False,
             'error': 500,

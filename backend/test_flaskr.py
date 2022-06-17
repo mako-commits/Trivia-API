@@ -24,6 +24,18 @@ class TriviaTestCase(unittest.TestCase):
              'category':3,
              'difficulty':3
              }
+        self.incomplete_question = {
+            'question': '',
+             'answer':'This is the answer',
+             'category':3,
+             'difficulty':3
+             }
+        self.search_term = {
+            "searchTerm" : "title"
+            }
+        self.search_term2 = {
+            "searchTerm" : "fresca"
+            }
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -39,70 +51,108 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
-    def test_get_categories(self):
+    def test_get_all_categories(self):
         res = self.client().get("/categories")
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['success'], True)
 
-    # def test_add_category(self):
-    #     res = self.client().post("/categories", json={"type": "Anime"})
-    #     data = json.loads(res.data)
-
-    #     self.assertEqual(res.status_code,200)
-    #     self.assertEqual(data["success"], True)
-    #     self.assertTrue(data["added"])
-    #     self.assertTrue(len(data["categories"]))
-    def test_405_get_all_categories(self):
+    def test_post_all_categories(self):
         res = self.client().post('/categories')
         data = json.loads(res.data)
-
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['message'], 'Method Not allowed')
-        
-    def test_get_paginated_questions(self):
-        res = self.client().get("/questions")
-        data = json.loads(res.data)
 
+    def test_get_paginated_page(self):
+        res = self.client().get("/questions?page=1")
+        data = json.loads(res.data)
         self.assertEqual(res.status_code,200)
         self.assertEqual(data["success"], True)
         self.assertTrue(data["total_questions"])
         self.assertTrue(len(data["questions"]))
 
-    def test_get_page(self):
+    def test_get_non_existant_page(self):
         res = self.client().get('questions?page=1000')
         data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.status_code, 500)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'resource not found')  
+        self.assertEqual(data['message'], 'Internal server error')  
 
-    def test_422_if_question_does_not_exist(self):
-        res = self.client().delete("/questions/100")
+    
+    """
+    Make sure to change the id of the question in 'test_delete_question' before every test
+    """
+    def test_delete_question(self):
+        res = self.client().delete("/questions/41")
         data = json.loads(res.data)
-
-        self.assertEqual(res.status_code, 422)
-        self.assertEqual(data["success"], False)
-        self.assertEqual(data["message"], "unprocessable")
-
-    def test_add_new_question(self):    
-        res = self.client().post("/questions", json=self.new_question)
-        data = json.loads(res.data)
-        
-
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
-        # self.assertTrue(data["created"])
-        # self.assertTrue(len(data["questions"]))
-    
-    # def test_405_if_question_creation_not_allowed(self):
-    #     res = self.client().post("/questions/23", json={})
-    #     data = json.loads(res.data)
+        
+    def test_delete_non_existant_question(self):
+        res = self.client().delete("/questions/100")
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 500)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Internal server error")
 
+    def test_post_new_question(self):    
+        res = self.client().post("/questions", json=self.new_question)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+
+    def test_post_incomplete_question(self):    
+        res = self.client().post("/questions", json=self.incomplete_question)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 500)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Internal server error")
+
+    def test_search_term(self):
+        res = self.client().post("/questions", json=self.search_term)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code,200)
+        self.assertTrue(data['success'], True)
+
+    def test_non_existant_search_term(self):
+        res = self.client().post("/questions", json=self.search_term2)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code,200)
+        self.assertTrue(data['success'], True)
+
+    def test_get_questions_in_specific_category(self):
+        res = self.client().get('/categories/1/questions')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code,200)
+    
+    def test_get_questions_in_non_existant_category(self):
+        res = self.client().get('/categories/100/questions')
+        data = json.loads(res.data)  
+        self.assertEqual(res.status_code,500)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Internal server error')
+    
+    # def test_play_quiz(self):
+    #     res = self.client().post("/quizzes", json={
+    #         "previous_questions": [7],
+    #         "quiz_category": 2
+    #     })
+    #     data = json.loads(res.data)
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertTrue(data["question"])
+
+    # def test_get_quiz_questions(self):
+    #     res = self.client().get("/quizzes", json={
+    #         "previous_questions": [7],
+    #         "quiz_category": 2
+    #     })
+    #     data = json.loads(res.data)
     #     self.assertEqual(res.status_code, 405)
-    #     self.assertEqual(data["Error"], False)
-    #     self.assertEqual(data["message"], "Method Not Allowed")
+    
+
+
+
+    
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

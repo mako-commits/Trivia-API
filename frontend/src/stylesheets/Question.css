@@ -66,12 +66,13 @@
 }
 
 .show-answer {
-  width: 100px;
+  width: 150px !important;
   margin-top: 5px;
   background-color: dodgerblue;
   color: white;
   padding: 3px 5px;
   margin-left: 0px !important;
+  cursor: pointer;
 }
 
 span.page-num {
@@ -93,4 +94,7 @@ img.category {
 
 img.delete {
   width: 20px;
+}
+.pagination-menu {
+  cursor: pointer;
 }
