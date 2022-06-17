@@ -1,6 +1,38 @@
 ## API Documentation
 
-### Endpoints
+## Introduction
+
+This API allows you manage a pool of questions and categories for a Trivia game.
+
+### Getting Started
+
+    - Base URL: `http://localhost:5000`
+
+### Errors
+
+- Errors are returned as JSON
+
+#### Status Codes
+
+```
+- 404 : "Resource not found"
+- 422 : "Unprocessable entity"
+- 400 : "Bad Request"
+- 405 : "Method Not Allowed"
+- 500 : "Internal server error"
+```
+
+#### Sample Response
+
+```json
+{
+  "success": False,
+  "error": 404,
+  "message": "resource not found"
+}
+```
+
+### Resource endpoint library
 
 ### `GET '/categories'`
 
@@ -25,7 +57,7 @@
 
 - Fetches all questions from the database
 - Request Argument: None
-- Returns: An object consisiting of categories, current categories,paginated list of questions consiting of 10 questions per page, total questions and success status.
+- Returns: a list of questions including pagination (every 10 questions), number of total questions, current category, categories and success status.
 
 #### Sample Response
 
@@ -71,7 +103,7 @@
 
 ### `GET '/categories/{category_id}/questions'`
 
-- Fetches all questions for a particular category
+- Get questions based on category
 - Request Argument: None
 - Returns: Current category, an array of questions within the specific category and the total number of questions within the category
 
@@ -116,7 +148,7 @@
 
 ### `DELETE '/questions/{question_id}'`
 
-- Deletes question with specified id
+- DELETE question using a question ID
 - Request Argument: None
 - Returns: Success status and id of deleted question if successful
 
@@ -131,7 +163,7 @@
 
 ### `POST '/questions'`
 
-- Creates a new question in the database
+- POST a new question, which will require the question and answer text,category, and difficulty score
 - Request Argument: None
 - Returns: Success status and id of added question
 

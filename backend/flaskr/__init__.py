@@ -40,7 +40,6 @@ def create_app(test_config=None):
     @app.route('/categories')
     def get_all_categories():
         categories = Category.query.all()
-        # formatted_categories = [category.format() for category in categories]
         formatted_categories = {
             category.id: category.type for category in categories}
         return (

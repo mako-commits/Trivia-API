@@ -82,11 +82,11 @@ class TriviaTestCase(unittest.TestCase):
     """
     Make sure to change the id of the question in 'test_delete_question' before every test
     """
-    def test_delete_question(self):
-        res = self.client().delete("/questions/41")
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data["success"], True)
+    # def test_delete_question(self):
+    #     res = self.client().delete("/questions/41")
+    #     data = json.loads(res.data)
+    #     self.assertEqual(res.status_code, 200)
+    #     self.assertEqual(data["success"], True)
         
     def test_delete_non_existant_question(self):
         res = self.client().delete("/questions/100")
@@ -128,26 +128,25 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_questions_in_non_existant_category(self):
         res = self.client().get('/categories/100/questions')
         data = json.loads(res.data)  
-        self.assertEqual(res.status_code,500)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Internal server error')
+        self.assertEqual(data['message'], 'Resource not found')
     
-    # def test_play_quiz(self):
-    #     res = self.client().post("/quizzes", json={
-    #         "previous_questions": [7],
-    #         "quiz_category": 2
-    #     })
-    #     data = json.loads(res.data)
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertTrue(data["question"])
+    def test_play_quiz(self):
+        res = self.client().post("/quizzes", json={
+            "previous_questions": [2],
+            "quiz_category": { "type": "History", "id": "4" }
+        })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data["question"])
 
-    # def test_get_quiz_questions(self):
-    #     res = self.client().get("/quizzes", json={
-    #         "previous_questions": [7],
-    #         "quiz_category": 2
-    #     })
-    #     data = json.loads(res.data)
-    #     self.assertEqual(res.status_code, 405)
+    def test_play_quiz_error(self):
+        res = self.client().post("/quizzes", json={})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data['message'], 'Bad Request')
     
 
 
