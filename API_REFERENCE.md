@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This API allows you manage a pool of questions and categories for a Trivia game.
+This API allows you manage a pool of questions and categories for a Trivia game. The API does not require authentication or API key
 
 ### Getting Started
 
-    - Base URL: `http://localhost:5000`
+    - Base URL: `http://127.0.0.1:5000`
 
 ### Errors
 

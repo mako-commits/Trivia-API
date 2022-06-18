@@ -74,7 +74,9 @@ flask run
 
 The `FLASK_ENVIRONMENT` flag will detect file changes and restart the server automatically.
 
-[View the README.md in the backend folder for the API documentation](./API_REFERENCE.md)
+## API Reference
+
+[View the API_REFERENCE.md for the API documentation](./API_REFERENCE.md)
 
 ## Author
 

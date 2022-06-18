@@ -77,7 +77,7 @@ def create_app(test_config=None):
         questions = Question.query.all()
         categories = Category.query.all()
         current_questions = paginate_questions(request, questions)
-        
+
         if len(current_questions) == 0:
             abort(404)
 
@@ -140,27 +140,27 @@ def create_app(test_config=None):
         question_category = body.get("category", None)
         question_difficulty = body.get("difficulty", None)
         search_term = body.get("searchTerm", None)
-       
+
         try:
             if new_question and question_answer is not None:
-                    question = Question(
-                        question=new_question,
-                        answer=question_answer,
-                        category=question_category,
-                        difficulty=question_difficulty)
-                    question.insert()
+                question = Question(
+                    question=new_question,
+                    answer=question_answer,
+                    category=question_category,
+                    difficulty=question_difficulty)
+                question.insert()
 
-                    return jsonify({
-                        'response': question.id,
-                        'success': True
-                    })
+                return jsonify({
+                    'response': question.id,
+                    'success': True
+                })
             else:
                 if search_term is not None:
                     questions = Question.query.filter(
                         Question.question.ilike('%{}%'.format(search_term))
                     ).all()
                     searched_questions = [question.format()
-                                            for question in questions]
+                                          for question in questions]
                     return jsonify({
                         'success': True,
                         'questions': searched_questions,
@@ -179,7 +179,7 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
-    
+
     """
     @TODO:
     Create a GET endpoint to get questions based on category.
@@ -196,7 +196,7 @@ def create_app(test_config=None):
         return jsonify({
             "questions": formatted_questions,
             "total_questions": len(questions),
-            "current_category" : category['type']
+            "current_category": category['type']
         })
     """
     @TODO:
@@ -249,26 +249,25 @@ def create_app(test_config=None):
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
-        "success": False,
-        "error": 404,
-        "message": "resource not found"}),
-        404, 
+            "success": False,
+            "error": 404,
+            "message": "resource not found"}),
+        404,
 
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
-        "success": False, 
-        "error": 422, 
-        "message": "unprocessable"}),
+            "success": False,
+            "error": 422,
+            "message": "unprocessable"}),
         422,
-        
 
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
-        "success": False,
-        "error": 400,
-        "message": "bad request"}),
+            "success": False,
+            "error": 400,
+            "message": "bad request"}),
         400
 
     @app.errorhandler(405)
