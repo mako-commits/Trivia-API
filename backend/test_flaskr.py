@@ -14,7 +14,8 @@ class TriviaTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "trivia_test"
+        self.database_name = os.environ['TEST_DATABASE_NAME']
+        self.database_password = os.environ['TEST_DATABASE_PASSWORD']
         self.database_path = 'postgresql://{}:{}@{}/{}'.format(
             'student', 'student', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
@@ -78,7 +79,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertTrue(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertTrue(data['message'], 'resource not found')
+        self.assertEqual(data['message'], 'resource not found')
 
     """
     Make sure to change the id of the question in 'test_delete_question' before every test
@@ -106,9 +107,10 @@ class TriviaTestCase(unittest.TestCase):
     def test_post_incomplete_question(self):
         res = self.client().post("/questions", json=self.incomplete_question)
         data = json.loads(res.data)
-        self.assertTrue(res.status_code, 422)
+        self.assertTrue(res.status_code, 404)
+        self.assertEqual(data['error'], 404)
         self.assertEqual(data["success"], False)
-        self.assertTrue(data["message"], "unprocessable")
+        self.assertEqual(data["message"], "resource not found")
 
     def test_search_term(self):
         res = self.client().post("/questions/search", json=self.search_term)
@@ -120,7 +122,7 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().post("/questions/search", json=self.search_term2)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertTrue(data['success'], True)
+        self.assertEqual(data['success'], True)
 
     def test_get_questions_in_specific_category(self):
         res = self.client().get('/categories/1/questions')
@@ -130,9 +132,9 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_questions_in_non_existant_category(self):
         res = self.client().get('/categories/100/questions')
         data = json.loads(res.data)
-        self.assertTrue(res.status_code, 404)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertTrue(data['message'], 'Resource not found')
+        self.assertEqual(data['message'], 'resource not found')
 
     def test_play_quiz(self):
         res = self.client().post("/quizzes", json={
