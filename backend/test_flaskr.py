@@ -76,25 +76,26 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_non_existant_page(self):
         res = self.client().get('questions?page=1000')
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 500)
+        self.assertTrue(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Internal server error')
+        self.assertTrue(data['message'], 'resource not found')
 
     """
     Make sure to change the id of the question in 'test_delete_question' before every test
     """
     # def test_delete_question(self):
-    #     res = self.client().delete("/questions/41")
+    #     res = self.client().delete("/questions/67")
     #     data = json.loads(res.data)
     #     self.assertEqual(res.status_code, 200)
     #     self.assertEqual(data["success"], True)
 
     def test_delete_non_existant_question(self):
-        res = self.client().delete("/questions/100")
+        res = self.client().delete("/questions/21")
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 500)
-        self.assertEqual(data["success"], False)
-        self.assertEqual(data["message"], "Internal server error")
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['error'], 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
 
     def test_post_new_question(self):
         res = self.client().post("/questions", json=self.new_question)
@@ -105,18 +106,18 @@ class TriviaTestCase(unittest.TestCase):
     def test_post_incomplete_question(self):
         res = self.client().post("/questions", json=self.incomplete_question)
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 500)
+        self.assertTrue(res.status_code, 422)
         self.assertEqual(data["success"], False)
-        self.assertEqual(data["message"], "Internal server error")
+        self.assertTrue(data["message"], "unprocessable")
 
     def test_search_term(self):
-        res = self.client().post("/questions", json=self.search_term)
+        res = self.client().post("/questions/search", json=self.search_term)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'], True)
 
     def test_non_existant_search_term(self):
-        res = self.client().post("/questions", json=self.search_term2)
+        res = self.client().post("/questions/search", json=self.search_term2)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'], True)
@@ -129,9 +130,9 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_questions_in_non_existant_category(self):
         res = self.client().get('/categories/100/questions')
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 404)
+        self.assertTrue(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Resource not found')
+        self.assertTrue(data['message'], 'Resource not found')
 
     def test_play_quiz(self):
         res = self.client().post("/quizzes", json={
@@ -145,9 +146,9 @@ class TriviaTestCase(unittest.TestCase):
     def test_play_quiz_error(self):
         res = self.client().post("/quizzes", json={})
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
-        self.assertEqual(data['message'], 'Bad Request')
+        self.assertEqual(data['message'], 'resource not found')
 
 
 # Make the tests conveniently executable

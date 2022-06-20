@@ -56,7 +56,7 @@ This API allows you manage a pool of questions and categories for a Trivia game.
 ### `GET '/questions'`
 
 - Fetches all questions from the database
-- Request Argument: None
+- Request Argument: query parameter: `page=int` starting from 1
 - Returns: a list of questions including pagination (every 10 questions), number of total questions, current category, categories and success status.
 
 #### Sample Response
@@ -104,7 +104,7 @@ This API allows you manage a pool of questions and categories for a Trivia game.
 ### `GET '/categories/{category_id}/questions'`
 
 - Get questions based on category
-- Request Argument: None
+- Request Argument: path parameter: `category_id` of type int
 - Returns: Current category, an array of questions within the specific category and the total number of questions within the category
 
 #### Sample Response
@@ -149,7 +149,7 @@ This API allows you manage a pool of questions and categories for a Trivia game.
 ### `DELETE '/questions/{question_id}'`
 
 - DELETE question using a question ID
-- Request Argument: None
+- Request Argument: Path parameter: `question_id` of type int
 - Returns: Success status and id of deleted question if successful
 
 #### Sample Response

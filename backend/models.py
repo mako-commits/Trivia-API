@@ -76,3 +76,5 @@ class Category(db.Model):
             'id': self.id,
             'type': self.type
             }
+    def get_category_id(self):
+        return  self.id
