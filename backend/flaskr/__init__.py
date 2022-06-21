@@ -42,7 +42,7 @@ def create_app(test_config=None):
         categories = Category.query.all()
         formatted_categories = {
             category.id: category.type for category in categories}
-        return (
+        return jsonify(
             {
                 'success': True,
                 'categories': formatted_categories,
@@ -102,8 +102,10 @@ def create_app(test_config=None):
     def delete_question(question_id):
         question = Question.query.filter(
             Question.id == question_id).one_or_none()
-        if question:
 
+        if question is None:
+            abort(404)
+        else:
             try:
                 question.delete()
                 questions = Question.query.all()
@@ -112,13 +114,12 @@ def create_app(test_config=None):
                     {
                         "success": True,
                         "deleted": question_id,
-                        # "questions": current_questions,
-                        # "total_questions": len(questions),
+                        "questions": current_questions,
+                        "total_questions": len(questions),
                     }
-                ), 200
+                )
             except BaseException:
-                abort(400)
-        abort(404)
+                abort(422)
 
     """
     @DONE:

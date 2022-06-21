@@ -14,10 +14,11 @@ class TriviaTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
+        self.database_username = os.environ['TEST_DATABASE_USERNAME']
         self.database_name = os.environ['TEST_DATABASE_NAME']
         self.database_password = os.environ['TEST_DATABASE_PASSWORD']
         self.database_path = 'postgresql://{}:{}@{}/{}'.format(
-            'student', 'student', 'localhost:5432', self.database_name)
+           self.database_username, self.database_password, 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
         self.new_question = {
@@ -59,6 +60,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertTrue(data["categories"])
 
     def test_post_all_categories(self):
         res = self.client().post('/categories')
@@ -84,14 +86,14 @@ class TriviaTestCase(unittest.TestCase):
     """
     Make sure to change the id of the question in 'test_delete_question' before every test
     """
-    # def test_delete_question(self):
-    #     res = self.client().delete("/questions/67")
-    #     data = json.loads(res.data)
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data["success"], True)
+    def test_delete_question(self):
+        res = self.client().delete("/questions/2")
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
 
     def test_delete_non_existant_question(self):
-        res = self.client().delete("/questions/21")
+        res = self.client().delete("/questions/1000")
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['error'], 404)
